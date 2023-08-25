@@ -31,7 +31,7 @@ class HotelSeeder extends Seeder
 
         Hotel::create([
             'jenis_kamar'=>'Family',
-            'harga'=> 900000, 
+            'harga'=> 1000000, 
             'gambar'=>'https://www.maldronhotellimerick.com/wp-content/uploads/sites/9/2019/11/family-bedroom.jpg',
             'vidio'=>'https://www.youtube.com/embed/V0ZmEre9PIU?si=hIZjUtixoEhIKCYG',
             ]);

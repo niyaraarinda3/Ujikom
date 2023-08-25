@@ -18,8 +18,6 @@
     <div class="container center-content mt-4" style="display: flex; justify-content: center; align-items: center; m">
         <p>Where Dreams Meet Nature</p>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
-
 </html>

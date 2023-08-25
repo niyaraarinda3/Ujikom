@@ -15,44 +15,33 @@ class PemesananController extends Controller
     }
     public function createPemesanan(Request $request)
     {
-    //  dd($request->all());
-    $hotel = Hotel::find($request->id_hotel);
-
-    if (!$hotel) {
-        return redirect()->back()->with('error', 'Hotel tidak ditemukan');
+        $pemesanan = new Pemesanan();   
+        $pemesanan->id_hotel = $request->jenis_kamar;
+        $pemesanan->nama = $request->nama;
+        $pemesanan->jenis_kelamin = $request->jenis_kelamin;
+        $pemesanan->nomor_identitas = $request->nomor_identitas;
+        $pemesanan->jenis_kamar = $request->jenis_kamar;
+        $pemesanan->harga = hotel::find($request->jenis_kamar)->harga;
+        $pemesanan->tanggal_menginap = $request->tanggal_menginap;
+        $pemesanan->durasi_menginap = $request->durasi_menginap;
+        $pemesanan->total_bayar = $request->total_bayar;
+        $pemesanan->save();
+        return redirect()->route('pemesanan.hotel')->with('success', 'Pemesanan berhasil dilakukan');
     }
-
-    $hargaHotel = $hotel->harga;
-    $durasiMenginap = $request->input('durasi_menginap');
-
-    $totalBayar = $hargaHotel * $durasiMenginap; // Initialize the totalBayar
     
-    // Diskon 10% jika lama menginap lebih dari 3 hari
-    if ($durasiMenginap > 3) {
-        $totalBayar *= 0.9; // Diskon 10%
+    public function calculateTotalBayar(Request $request)
+    {
+        $harga = $request->harga;
+        $durasi_menginap = $request->durasi_menginap;
+        $breakfast = $request->breakfast;
+        $total_bayar = $harga * $durasi_menginap;
+        if ($durasi_menginap > 3) {
+            $total_bayar -= $total_bayar * 0.1;
+        }
+        if ($breakfast) {
+            $total_bayar += 80000;
+        }
+        return $total_bayar;
     }
-
-    // Tambahan biaya untuk breakfast
-    if ($request->input('breakfast')) {
-        $totalBayar += 80000; // Biaya breakfast 80,000
-    }
-
-    // Create a new Pemesanan entry
-    $daftarPemesanan = Pemesanan::create([
-        'id_hotel' => $request->id_hotel,
-        'nama' => $request->input('nama'),
-        'jenis_kelamin' => $request->input('jenis_kelamin'),
-        'nomor_identitas' => $request->input('nomor_identitas'),
-        'jenis_kamar' => $request->input('jenis_kamar'),
-        'harga' => $hargaHotel,
-        'tanggal_menginap' => $request->input('tanggal_menginap'),
-        'durasi_menginap' => $durasiMenginap,
-        'total_bayar' => $totalBayar,
-    ]);
-
-    return redirect()->route('pemesanan.hotel'); // Sesuaikan dengan route yang tepat
-}
-
-    
     
 }

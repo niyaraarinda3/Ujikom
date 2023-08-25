@@ -11,7 +11,19 @@ class Pemesanan extends Model
     
     protected $table = 'pemesanans';
 
-    function hotel()
+    protected $fillable = [
+        'id_hotel',
+        'nama',
+        'jenis_kelamin',
+        'nomor_identitas',
+        'jenis_kamar',
+        'harga',
+        'tanggal_menginap',
+        'durasi_menginap',
+        'total_bayar',
+    ];
+
+    public function hotel()
     {
         return $this->belongsTo(Hotel::class, 'id_hotel', 'id');
     }

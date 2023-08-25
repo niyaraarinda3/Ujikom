@@ -26,19 +26,19 @@
                         <input type="text" class="form-control" id="nama" name="nama" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Jenis Kelamin</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="jenis_kelamin" id="jenis_kelamin" value="Laki-laki" required>
-                            <label class="form-check-label" for="laki_laki">
-                                Laki-laki
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="jenis_kelamin" id="jenis_kelamin" value="Perempuan" required>
-                            <label class="form-check-label" for="perempuan">
-                                Perempuan
-                            </label>
-                        </div>
+                    <label for="nama" class="form-label">Jenis Kelamin</label>
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="jenis_kelamin" id="jenis_kelamin_laki" value="Laki-laki" required="">
+                        <label class="form-check-label" for="jenis_kelamin">
+                            Laki-laki
+                        </label>
+                    </div>
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="jenis_kelamin" id="jenis_kelamin_perempuan" value="Perempuan" required="">
+                        <label class="form-check-label" for="jenis_kelamin">
+                            Perempuan
+                        </label>
+                    </div>
                     </div>
                     <div class="mb-3">
                         <label for="nomor_identitas" class="form-label">Nomor Identitas</label>
@@ -49,13 +49,13 @@
                         <select class="form-select" id="jenis_kamar" name="jenis_kamar" required>
                             <option value="" disabled selected>Pilih Tipe Kamar</option>
                             @foreach($hotel as $val)
-                                <option value="{{ $val->id }}">{{ $val->jenis_kamar}}</option>
+                                <option value="{{ $val->id }}" harga="{{ $val->harga}}">{{ $val->jenis_kamar}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="harga" class="form-label">Harga</label>
-                        <input id="harga" name="harga" type="number" value="{{$hotel[0]->harga}}" readonly class="rounded border border-gray-300 w-48" required autofocus>
+                        <input id="harga" name="harga" type="number" value="" readonly class="rounded border border-gray-300 w-48" required readonly>
                     </div>
                     <div class="mb-3">
                         <label for="tanggal_menginap" class="form-label">Tanggal Pemesanan</label>
@@ -78,56 +78,68 @@
                     </div>
                     <div class="mb-3">
                         <label for="total_bayar" class="form-label">Total Bayar</label>
-                        <input id="total" name="total" value="{{$hotel[0]->harga}}" type="number" readonly autofocus>
+                        <input id="total_bayar" name="total_bayar" value="" type="number" readonly autofocus title="Total Bayar" placeholder="Total Bayar">
                     </div>
                     <button type="button" class="btn btn-primary" onclick="hitungTotal({{json_encode($hotel)}})">Hitung Total Bayar</button>
                     <button type="submit" class="btn btn-success">Pesan</button>
-                    <button type="button" class="btn btn-danger" onclick="resetForm()">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="resetForm()">Cancel</button> 
                 </form>
             </div>
         </div>
     </div>
-
     <!-- js -->
     <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous"></script>
     <script>
-        function hitungTotal(dataKamar) {
-            durasi = $("#durasi").val()
-            breakfast = $("#breakfast").is(":checked")
-            hargaKamar = $("#harga").val()
-
-            // harga kamar
-            // cek harga kamar
-            dataKamar.map((val => {
-                if ($("#tipe_kamar").val() == val.id) {
-                    hargaKamar = $("#harga").val(val.harga)
+       
+        $(document).ready(function() {
+            $("#nomor_identitas").keyup(function() {
+                if ($(this).val().length > 16) {
+                    alert("Nomor identitas tidak boleh lebih dari 16 karakter");
+                    $(this).val($(this).val().substr(0, 16));
                 }
-            }))
-
-            // total harga
-            totalHarga = parseInt(hargaKamar.val())
-            console.log(totalHarga)
-            totalHarga = totalHarga * durasi
-            // jika durasi menginap lebih dari 3 hari
-            // kasih diskon 10%
-            if (durasi > 3) {
-                diskon = totalHarga * (10 / 100)
-                totalHarga = totalHarga - diskon
+            });
+        });
+        
+        $(document).ready(function() {
+            $("#durasi_menginap").keypress(function(event) {
+                if (event.which != 8 && isNaN(String.fromCharCode(event.which))) {
+                    event.preventDefault();
+                    alert("Harus Angka");
+                }
+            });
+        });
+ 
+        $(document).ready(function() {
+            $("#jenis_kamar").change(function() {
+                var harga = $("#jenis_kamar option:selected").attr("harga");
+                $("#harga").val(harga);
+            });
+        });
+      
+        function hitungTotal(hotel) {
+            var harga = $("#jenis_kamar option:selected").attr("harga");
+            var durasiMenginap = $("#durasi_menginap").val();
+            var totalBayar = harga * durasiMenginap;
+            if (durasiMenginap > 3) {
+                diskon = totalBayar * (10/100);
+                totalBayar = totalBayar - diskon;
             }
-
-            // jika termasuk breakfast true
-            console.log(breakfast)
-            if (breakfast) {
-                // tambah 80.000
-                totalHarga += 80000
+            if ($("#breakfast").is(":checked")) {
+                totalBayar += (80000 * durasiMenginap);
             }
-
-            // edit input total harga
-            $("#total").val(totalHarga)
+            $("#total_bayar").val(totalBayar);
         }
+      
+        function resetForm() {
+            window.location.href = "{{ route('pemesanan.hotel') }}";
+        }
+       
+        $(document).ready(function() {
+            if ("{{ session('success') }}") {
+                alert("Data berhasil disubmit");
+            }
+        });
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
-
 </html>

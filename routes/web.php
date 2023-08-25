@@ -8,22 +8,6 @@ use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\TentangController;
 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-
-// Route::get('/', function () {
-//     return view('wisata.home');
-// });
-
 Route::get('/', [HotelController::class, 'viewHome'])->name('home.hotel');
 
 Route::get('/daftar-hotel', [DaftarHotelController::class, 'viewDaftarHotel'])->name('daftar.hotel');
